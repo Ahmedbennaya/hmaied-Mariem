@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mariem Hmaied — Interior Designer &amp; Decorator</title>
+<meta name="description" content="Interior design, dressing layouts, technical plans, 3D concepts, and site follow-up by Mariem Hmaied." />
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Italiana&family=Manrope:wght@200;300;400;500;600&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet" />
+
+<!-- Styles -->
+<link rel="stylesheet" href="styles.css" />
+
+<!-- Libraries -->
+<script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+</head>
+<body>
+
+<!-- ============== CUSTOM CURSOR ============== -->
+<div class="cursor-ring" aria-hidden="true"></div>
+<div class="cursor-dot" aria-hidden="true"></div>
+
+<!-- ============== LOADER ============== -->
+<div class="loader" aria-hidden="true">
+  <div class="loader-mark"><span>Mariem Hmaied</span></div>
+  <div class="loader-bar"></div>
+  <div class="loader-pct" data-i18n="loader.subtitle">Interior design — Since 2017</div>
+</div>
+
+<!-- ============== NAV ============== -->
+<nav class="nav" data-screen-label="Nav">
+  <a href="#top" class="nav-logo">
+    Mariem Hmaied
+    <span class="dot"></span>
+  </a>
+  <div class="nav-links">
+    <a href="#about" data-i18n="nav.about">About</a>
+    <a href="#services" data-i18n="nav.services">Services</a>
+    <a href="#portfolio" data-i18n="nav.portfolio">Portfolio</a>
+    <a href="#experience" data-i18n="nav.experience">Experience</a>
+    <a href="#skills" data-i18n="nav.skills">Skills</a>
+    <a href="#contact" data-i18n="nav.contact">Contact</a>
+  </div>
+  <div class="nav-actions">
+    <button class="lang-toggle magnetic" type="button" data-cursor="hover" aria-label="Switch to French">
+      <span class="lang-toggle-code">FR</span>
+      <span class="lang-toggle-label">Français</span>
+    </button>
+    <a href="assets/cv-2025.pdf" class="nav-cta magnetic" data-cursor="hover" target="_blank" rel="noopener" data-i18n="nav.downloadCv">Download CV</a>
+  </div>
+</nav>
+
+<!-- ============== HERO ============== -->
+<section class="hero" id="top" data-screen-label="01 Hero">
+  <div class="hero-bg"></div>
+
+  <!-- LIVE DESIGN SOFTWARE VIEWPORT — Mariem at work -->
+  <div class="hero-viewport" aria-hidden="true">
+    <div class="vp-frame">
+      <!-- Top HUD: software label + REC + timecode -->
+      <div class="vp-hud vp-hud-top">
+        <div class="vp-hud-left">
+          <span class="vp-rec" data-i18n="hero.viewportRec"><span class="vp-rec-dot"></span> LIVE · REC</span>
+          <span class="vp-divider"></span>
+          <span class="vp-software" data-i18n="hero.viewportSoftware">KITCHENDRAW · AUTOCAD · 2020 DESIGN</span>
+        </div>
+        <div class="vp-hud-right">
+          <span class="vp-timecode"><span id="vp-tc">00:00:00:00</span></span>
+        </div>
+      </div>
+
+      <!-- Canvas viewport -->
+      <canvas id="viewport-canvas"></canvas>
+
+      <!-- Design software-style overlays -->
+      <div class="vp-overlay">
+        <span class="vp-corner vp-corner-tl"></span>
+        <span class="vp-corner vp-corner-tr"></span>
+        <span class="vp-corner vp-corner-bl"></span>
+        <span class="vp-corner vp-corner-br"></span>
+        <div class="vp-scanlines"></div>
+
+        <!-- Viewport label like in CAD/design software -->
+        <div class="vp-viewport-label">
+          <span class="vp-vl-axis" data-i18n="hero.viewportAxis">[ Perspective ]</span>
+          <span class="vp-vl-shade" data-i18n="hero.viewportShade">Wireframe + Edged Faces</span>
+        </div>
+
+        <!-- XYZ gizmo bottom-left -->
+        <svg class="vp-gizmo" viewBox="0 0 60 60">
+          <line x1="30" y1="30" x2="55" y2="30" stroke="#e85d3a" stroke-width="1.4"/>
+          <line x1="30" y1="30" x2="30" y2="5" stroke="#7dd25b" stroke-width="1.4"/>
+          <line x1="30" y1="30" x2="14" y2="46" stroke="#4a9fff" stroke-width="1.4"/>
+          <text x="56" y="33" font-family="JetBrains Mono" font-size="7" fill="#e85d3a">X</text>
+          <text x="32" y="6" font-family="JetBrains Mono" font-size="7" fill="#7dd25b">Y</text>
+          <text x="6" y="49" font-family="JetBrains Mono" font-size="7" fill="#4a9fff">Z</text>
+        </svg>
+
+        <!-- Software-style cursor crosshair that wanders -->
+        <div class="vp-cursor" id="vp-cursor">
+          <span class="vp-cursor-cross"></span>
+          <span class="vp-cursor-label" data-i18n="hero.cursorLabel">Move <span>+X</span></span>
+        </div>
+
+        <!-- Selection annotation pin -->
+        <div class="vp-pin">
+          <span class="vp-pin-dot"></span>
+          <div class="vp-pin-line"></div>
+          <div class="vp-pin-card">
+            <span class="vp-pin-kicker" data-i18n="hero.pinKicker">Kitchen Model</span>
+            <span class="vp-pin-name" data-i18n="hero.pinName">Island Layout · 3D draft</span>
+            <span class="vp-pin-meta" data-i18n="hero.pinMeta">Mariem · KitchenDraw · cabinetry study</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom HUD: frame counter + verts + render mode -->
+      <div class="vp-hud vp-hud-bot">
+        <div class="vp-hud-left">
+          <span class="vp-stat">FRAME <span id="vp-frame">00000</span> / 00250</span>
+          <span class="vp-divider"></span>
+          <span class="vp-stat">VERTS 18,960</span>
+          <span class="vp-divider"></span>
+          <span class="vp-stat">FACES 9,428</span>
+        </div>
+        <div class="vp-hud-right">
+          <span class="vp-stat vp-stat-accent">VIEWPORT 01 / 25fps</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Small caption strip below the monitor -->
+    <span class="hero-interior-label" data-i18n="hero.interiorLabel">— Mariem Hmaied · from concept to site follow-up</span>
+  </div>
+
+  <canvas id="hero-canvas"></canvas>
+
+  <div class="hero-content">
+    <div>
+      <div class="hero-meta">
+        <span class="eyebrow" data-i18n="hero.eyebrow">Interior Designer &amp; Decorator</span>
+        <span class="designer-name">— Mariem Hmaied</span>
+      </div>
+
+      <h1 class="hero-title" data-i18n="hero.title">
+        <span class="word-mask"><span>Interior Design,</span></span>
+        <span class="word-mask"><span class="accent">Dressing</span></span>
+        <span class="word-mask"><span>&amp; Space Planning</span></span>
+      </h1>
+
+      <p class="hero-sub" data-i18n="hero.sub">
+        Tunis-based designer creating interior layouts, dressing and kitchen
+        concepts, technical plans, realistic 3D visuals, material choices,
+        and practical site follow-up.
+      </p>
+
+      <div class="hero-ctas">
+        <a href="#portfolio" class="btn btn-primary magnetic" data-cursor="hover">
+          <span class="btn-label" data-i18n="hero.cta.view">View Real Project</span>
+          <span class="arrow"></span>
+        </a>
+        <a href="assets/cv-2025.pdf" class="btn btn-ghost magnetic" data-cursor="hover" target="_blank" rel="noopener">
+          <span class="btn-label" data-i18n="hero.cta.cv">Download CV</span>
+          <span class="arrow"></span>
+        </a>
+      </div>
+    </div>
+
+    <aside class="hero-side">
+      <div class="stat">
+        <span class="stat-num"><span class="count-up" data-to="9">0</span><span style="color:var(--gold);">+</span></span>
+        <span data-i18n="hero.stat.years">Years in Interior Design</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num"><span class="count-up" data-to="3">0</span></span>
+        <span data-i18n="hero.stat.software">Design Software</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num"><span class="count-up" data-to="3">0</span></span>
+        <span data-i18n="hero.stat.languages">Languages</span>
+      </div>
+    </aside>
+  </div>
+
+  <div class="hero-scroll">
+    <span data-i18n="hero.scroll.explore">Scroll to Explore</span>
+    <span class="line"></span>
+    <span id="studio-time">—</span>
+    <span data-i18n="hero.scroll.location">Tunis, Tunisia</span>
+  </div>
+</section>
+
+<!-- ============== MARQUEE ============== -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span data-i18n="marquee.text">Interior Design <span class="star">✦</span> Dressing <span class="star">✦</span> Kitchen Layouts <span class="star">✦</span> Technical Plans <span class="star">✦</span> 3D Renders <span class="star">✦</span> Site Follow-up <span class="star">✦</span></span>
+    <span data-i18n="marquee.text">Interior Design <span class="star">✦</span> Dressing <span class="star">✦</span> Kitchen Layouts <span class="star">✦</span> Technical Plans <span class="star">✦</span> 3D Renders <span class="star">✦</span> Site Follow-up <span class="star">✦</span></span>
+  </div>
+</div>
+
+<!-- ============== ABOUT ============== -->
+<section class="about" id="about" data-screen-label="02 About">
+  <div class="about-wrap">
+    <div class="about-stack reveal">
+      <div class="about-img about-img-main reveal-image">
+        <img class="about-portrait" src="assets/mariem-hmaied-portrait.jpg" alt="Portrait of Mariem Hmaied" loading="lazy" />
+        <span class="badge" data-i18n="about.badge">Since 2017</span>
+        <div class="about-portrait-caption">
+          <span>Mariem Hmaied</span>
+          <small data-i18n="about.role">Interior Designer &amp; Decorator</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="about-text">
+      <span class="section-num reveal" data-i18n="about.sectionNum">— 01 / About</span>
+      <h2 class="section-title section-title-anim reveal">
+        <span data-i18n="about.title">About <span class="display italic" style="color:var(--gold);">Mariem</span><br />Hmaied</span>
+      </h2>
+
+      <p class="lead reveal reveal-delay-1" data-i18n="about.lead">
+        Mariem Hmaied creates <span class="gold italic">functional, precise, and client-focused</span>
+        interiors for homes, dressing spaces, kitchens, and custom layouts.
+      </p>
+
+      <p class="body reveal reveal-delay-2" data-i18n="about.body">
+        A graduate of Collège LaSalle Tunis (BTP, Décoration d'Intérieur, 2016), Mariem has
+        worked across architecture offices, joinery workshops, kitchen and aluminium showrooms,
+        and since October 2022 as a freelance designer with JK Building. Her work covers sketches,
+        APS and APD, technical drawings, realistic 3D renderings, material samples, supplier
+        coordination, and site follow-up.
+      </p>
+
+      <div class="about-signature reveal reveal-delay-3" data-i18n="about.signature">— Mariem Hmaied</div>
+
+      <div class="about-stats reveal reveal-delay-3">
+        <div>
+          <div class="stat-num"><span class="gold">2017</span></div>
+          <div class="stat-label" data-i18n="about.stats.start">Career Start</div>
+        </div>
+        <div>
+          <div class="stat-num"><span>2022</span></div>
+          <div class="stat-label" data-i18n="about.stats.freelance">Freelance Practice</div>
+        </div>
+        <div>
+          <div class="stat-num"><span class="count-up" data-to="3">0</span></div>
+          <div class="stat-label" data-i18n="about.stats.languages">Languages</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== MANIFESTO ============== -->
+<section class="manifesto" data-screen-label="02b Manifesto">
+  <div class="manifesto-wrap">
+    <span class="eyebrow manifesto-eyebrow" data-i18n="manifesto.eyebrow">— Working Method · Vol. 01</span>
+    <h2 class="manifesto-statement">
+      <span class="ms-line" data-i18n="manifesto.line1"><span>Listen carefully,</span></span>
+      <span class="ms-line" data-i18n="manifesto.line2"><span class="display italic gold">draw precisely,</span></span>
+      <span class="ms-line" data-i18n="manifesto.line3"><span>render clearly,</span></span>
+      <span class="ms-line" data-i18n="manifesto.line4"><span class="display italic">then follow the site</span></span>
+      <span class="ms-line" data-i18n="manifesto.line5"><span>until the detail is right.</span></span>
+    </h2>
+    <div class="manifesto-foot">
+      <p data-i18n="manifesto.body">
+        Mariem's CV combines design, technical drawing, client advice, commercial
+        negotiation, and chantier follow-up. That practical mix keeps each project
+        readable for the client and buildable for the workshop.
+      </p>
+      <span class="manifesto-signature" data-i18n="manifesto.signature">— Mariem Hmaied, Interior Designer &amp; Decorator</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============== SERVICES (editorial list) ============== -->
+<section class="services" id="services" data-screen-label="03 Services">
+  <div class="services-head">
+    <div>
+      <span class="eyebrow" style="margin-bottom:24px; display:inline-flex;" data-i18n="services.eyebrow">— 02 / Services</span>
+      <h2 class="section-title section-title-anim" style="margin-top:18px;">
+        <span data-i18n="services.title">Practice<br /><span class="display italic" style="color:var(--gold);">— refined.</span></span>
+      </h2>
+    </div>
+    <p class="desc" data-i18n="services.desc">
+      Services taken from Mariem's CV: design studies, technical drawings,
+      3D concepts, client advice, supplier coordination, and chantier follow-up.
+    </p>
+  </div>
+
+  <ul class="services-list">
+    <li class="svc-row" data-cursor="hover" role="button" tabindex="0"
+        data-img="assets/project-interior-01.jpg"
+        data-gallery-title="Interior Design"
+        data-gallery-title-fr="Design d’intérieur"
+        data-gallery-kicker="Sketches · APS · APD"
+        data-gallery-kicker-fr="Croquis · APS · APD"
+        data-gallery-description="Complete interior studies from first sketches to client-ready layout direction, mood, materials, and project validation."
+        data-gallery-description-fr="Études complètes d’intérieur, des premiers croquis à l’implantation validée par le client, avec ambiance, matériaux et direction projet."
+        data-gallery-images="assets/project-interior-01.jpg, assets/project-interior-02.jpg, assets/project-interior-03.jpg">
+      <span class="svc-num">01</span>
+      <span class="svc-title" data-i18n="services.items.1.title">Interior<span class="svc-italic"> Design</span></span>
+      <span class="svc-tag" data-i18n="services.items.1.tag">Sketches · APS · APD</span>
+      <span class="svc-arrow">↗</span>
+    </li>
+    <li class="svc-row" data-cursor="hover" role="button" tabindex="0"
+        data-img="assets/project-dressing-kitchen-01.jpg"
+        data-gallery-title="Dressing &amp; Kitchen"
+        data-gallery-title-fr="Dressing &amp; Cuisine"
+        data-gallery-kicker="KitchenDraw · 2020 Design"
+        data-gallery-kicker-fr="KitchenDraw · 2020 Design"
+        data-gallery-description="Kitchen, dressing, and custom storage concepts with dimensions, modules, finishes, and realistic client views."
+        data-gallery-description-fr="Concepts de cuisine, dressing et rangements sur mesure avec dimensions, modules, finitions et vues réalistes pour le client."
+        data-gallery-images="assets/project-dressing-kitchen-01.jpg, assets/project-dressing-kitchen-02.jpg, assets/project-dressing-kitchen-03.jpg">
+      <span class="svc-num">02</span>
+      <span class="svc-title" data-i18n="services.items.2.title">Dressing<span class="svc-italic"> &amp; Kitchen</span></span>
+      <span class="svc-tag" data-i18n="services.items.2.tag">KitchenDraw · 2020 Design</span>
+      <span class="svc-arrow">↗</span>
+    </li>
+    <li class="svc-row" data-cursor="hover" role="button" tabindex="0"
+        data-img="assets/project-plans-01.jpg"
+        data-gallery-title="Technical Plans"
+        data-gallery-title-fr="Plans techniques"
+        data-gallery-kicker="AutoCAD · Details"
+        data-gallery-kicker-fr="AutoCAD · Détails"
+        data-gallery-description="Detailed plans, elevations, module drawings, dimensions, and documents prepared for workshop and site coordination."
+        data-gallery-description-fr="Plans détaillés, élévations, dessins de modules, dimensions et documents préparés pour l’atelier et la coordination du chantier."
+        data-gallery-images="assets/project-plans-01.jpg, assets/project-plans-02.jpg, assets/project-plans-03.jpg">
+      <span class="svc-num">03</span>
+      <span class="svc-title" data-i18n="services.items.3.title">Technical<span class="svc-italic"> Plans</span></span>
+      <span class="svc-tag" data-i18n="services.items.3.tag">AutoCAD · Details</span>
+      <span class="svc-arrow">↗</span>
+    </li>
+    <li class="svc-row" data-cursor="hover" role="button" tabindex="0"
+        data-img="assets/project-3d-01.jpg"
+        data-gallery-title="3D Renderings"
+        data-gallery-title-fr="Rendus 3D"
+        data-gallery-kicker="Realistic Views"
+        data-gallery-kicker-fr="Vues réalistes"
+        data-gallery-description="Realistic 3D visuals that help clients understand volume, finish, light, circulation, and the final atmosphere."
+        data-gallery-description-fr="Visuels 3D réalistes pour comprendre les volumes, finitions, lumières, circulations et l’ambiance finale."
+        data-gallery-images="assets/project-3d-01.jpg, assets/project-3d-02.jpg, assets/project-3d-03.jpg">
+      <span class="svc-num">04</span>
+      <span class="svc-title" data-i18n="services.items.4.title">3D<span class="svc-italic"> Renderings</span></span>
+      <span class="svc-tag" data-i18n="services.items.4.tag">Realistic Views</span>
+      <span class="svc-arrow">↗</span>
+    </li>
+    <li class="svc-row" data-cursor="hover" role="button" tabindex="0"
+        data-img="assets/project-materials-01.jpg"
+        data-gallery-title="Suppliers &amp; Materials"
+        data-gallery-title-fr="Fournisseurs &amp; matériaux"
+        data-gallery-kicker="Quality · Samples"
+        data-gallery-kicker-fr="Qualité · Échantillons"
+        data-gallery-description="Material choices, samples, supplier coordination, and practical decisions for quality, cost, and execution."
+        data-gallery-description-fr="Choix des matériaux, échantillons, coordination fournisseurs et décisions pratiques pour la qualité, le coût et l’exécution."
+        data-gallery-images="assets/project-materials-01.jpg, assets/project-materials-02.jpg, assets/project-materials-03.jpg">
+      <span class="svc-num">05</span>
+      <span class="svc-title" data-i18n="services.items.5.title">Suppliers<span class="svc-italic"> &amp; Materials</span></span>
+      <span class="svc-tag" data-i18n="services.items.5.tag">Quality · Samples</span>
+      <span class="svc-arrow">↗</span>
+    </li>
+    <li class="svc-row" data-cursor="hover" role="button" tabindex="0"
+        data-img="assets/project-site-01.jpg"
+        data-gallery-title="Site Follow-up"
+        data-gallery-title-fr="Suivi de chantier"
+        data-gallery-kicker="Deadlines · Costs"
+        data-gallery-kicker-fr="Délais · Coûts"
+        data-gallery-description="Chantier follow-up focused on technical prescriptions, timing, costs, quality control, and final delivery."
+        data-gallery-description-fr="Suivi de chantier centré sur les prescriptions techniques, délais, coûts, contrôle qualité et réception finale."
+        data-gallery-images="assets/project-site-01.jpg, assets/project-site-02.jpg, assets/project-site-03.jpg">
+      <span class="svc-num">06</span>
+      <span class="svc-title" data-i18n="services.items.6.title">Site<span class="svc-italic"> Follow-up</span></span>
+      <span class="svc-tag" data-i18n="services.items.6.tag">Deadlines · Costs</span>
+      <span class="svc-arrow">↗</span>
+    </li>
+  </ul>
+
+  <div class="svc-preview" aria-hidden="true">
+    <img alt="" />
+  </div>
+
+  <div class="project-gallery" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Project image gallery">
+    <button class="project-gallery-close" type="button" aria-label="Close gallery">
+      <span></span>
+      <span></span>
+    </button>
+    <div class="project-gallery-shell">
+      <div class="project-gallery-copy">
+        <span class="project-gallery-kicker" data-i18n="gallery.kicker">Project</span>
+        <h3 class="project-gallery-title" data-i18n="gallery.title">Project Gallery</h3>
+        <p class="project-gallery-desc"></p>
+        <div class="project-gallery-note" data-i18n="gallery.note">Click a thumbnail to preview it larger.</div>
+      </div>
+      <div class="project-gallery-media">
+        <figure class="project-gallery-hero">
+          <img alt="" />
+        </figure>
+        <div class="project-gallery-grid"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== PORTFOLIO (horizontal) ============== -->
+<section class="portfolio" id="portfolio" data-screen-label="04 Portfolio">
+  <div class="portfolio-head">
+    <div>
+      <span class="eyebrow" style="margin-bottom:24px; display:inline-flex;" data-i18n="portfolio.eyebrow">— 03 / Selected Work</span>
+      <h2 class="section-title section-title-anim" style="margin-top:18px;">
+        <span data-i18n="portfolio.title">Selected<br /><span class="display italic" style="color:var(--gold);">interiors.</span></span>
+      </h2>
+    </div>
+    <p class="desc" data-i18n="portfolio.desc">
+      Category previews with real reference images for interiors, dressing and kitchen,
+      technical plans, renderings, materials, and site follow-up.
+    </p>
+  </div>
+
+  <div class="h-scroll">
+    <div class="h-track">
+
+      <article class="proj-card feature" data-cursor="hover">
+        <div class="proj-img"><img src="assets/project-interior-01.jpg" alt="Warm modern residential interior design" loading="lazy" /></div>
+        <span class="proj-tag" data-i18n="portfolio.cards.1.tag">Interior</span>
+        <div class="proj-meta">
+          <div class="proj-info">
+            <span class="proj-cat" data-i18n="portfolio.cards.1.cat">Residential · Interior Study</span>
+            <span class="proj-name" data-i18n="portfolio.cards.1.name">Interior<br/>Design</span>
+          </div>
+          <span class="proj-year" data-i18n="portfolio.cards.1.year">01</span>
+        </div>
+      </article>
+
+      <article class="proj-card" data-cursor="hover">
+        <div class="proj-img"><img src="assets/project-dressing-kitchen-01.jpg" alt="Custom dressing and kitchen storage design" loading="lazy" /></div>
+        <div class="proj-meta">
+          <div class="proj-info">
+            <span class="proj-cat" data-i18n="portfolio.cards.2.cat">Dressing · Kitchen</span>
+            <span class="proj-name" data-i18n="portfolio.cards.2.name">Dressing<br/>&amp; Kitchen</span>
+          </div>
+          <span class="proj-year" data-i18n="portfolio.cards.2.year">02</span>
+        </div>
+      </article>
+
+      <article class="proj-card feature" data-cursor="hover">
+        <div class="proj-img"><img src="assets/project-plans-01.jpg" alt="Architectural technical drawing on a desk" loading="lazy" /></div>
+        <div class="proj-meta">
+          <div class="proj-info">
+            <span class="proj-cat" data-i18n="portfolio.cards.3.cat">AutoCAD · Detail Plans</span>
+            <span class="proj-name" data-i18n="portfolio.cards.3.name">Technical<br/>Plans</span>
+          </div>
+          <span class="proj-year" data-i18n="portfolio.cards.3.year">03</span>
+        </div>
+      </article>
+
+      <article class="proj-card" data-cursor="hover">
+        <div class="proj-img"><img src="assets/project-3d-01.jpg" alt="Modern interior 3D rendering" loading="lazy" /></div>
+        <div class="proj-meta">
+          <div class="proj-info">
+            <span class="proj-cat" data-i18n="portfolio.cards.4.cat">Rendering · Realistic View</span>
+            <span class="proj-name" data-i18n="portfolio.cards.4.name">3D<br/>Renderings</span>
+          </div>
+          <span class="proj-year" data-i18n="portfolio.cards.4.year">04</span>
+        </div>
+      </article>
+
+      <article class="proj-card feature" data-cursor="hover">
+        <div class="proj-img"><img src="assets/project-materials-01.jpg" alt="Interior material samples and finishes" loading="lazy" /></div>
+        <div class="proj-meta">
+          <div class="proj-info">
+            <span class="proj-cat" data-i18n="portfolio.cards.5.cat">Suppliers · Material Samples</span>
+            <span class="proj-name" data-i18n="portfolio.cards.5.name">Suppliers<br/>&amp; Materials</span>
+          </div>
+          <span class="proj-year" data-i18n="portfolio.cards.5.year">05</span>
+        </div>
+      </article>
+
+      <article class="proj-card" data-cursor="hover">
+        <div class="proj-img"><img src="assets/project-site-01.jpg" alt="Construction site team reviewing project plans" loading="lazy" /></div>
+        <span class="proj-tag" data-i18n="portfolio.cards.6.tag">Chantier</span>
+        <div class="proj-meta">
+          <div class="proj-info">
+            <span class="proj-cat" data-i18n="portfolio.cards.6.cat">Site · Quality Control</span>
+            <span class="proj-name" data-i18n="portfolio.cards.6.name">Site<br/>Follow-up</span>
+          </div>
+          <span class="proj-year" data-i18n="portfolio.cards.6.year">06</span>
+        </div>
+      </article>
+
+    </div>
+
+    <div class="h-progress"><div class="h-progress-fill"></div></div>
+  </div>
+</section>
+
+<!-- ============== 3D SHOWCASE ============== -->
+<section class="showcase" id="showcase" data-screen-label="05 Showcase">
+  <canvas id="showcase-canvas"></canvas>
+  <div class="showcase-content">
+    <div class="showcase-text">
+      <span class="section-num" data-i18n="showcase.sectionNum">— 04 / Project File</span>
+      <h2>
+        <span data-i18n="showcase.title">From 3D view<br/>
+        <span class="gold">to workshop plan.</span></span>
+      </h2>
+      <p data-i18n="showcase.body">
+        The Dressing Malek PDF includes client-facing 3D views plus technical
+        sheets for dimensions, module layout, shelves, drawers, door clearance,
+        and final workshop discussion.
+      </p>
+      <div class="showcase-spec">
+        <div class="row">
+          <div class="k" data-i18n="showcase.spec.software">Software</div>
+          <div class="v">KitchenDraw</div>
+        </div>
+        <div class="row">
+          <div class="k" data-i18n="showcase.spec.scope">Scope</div>
+          <div class="v" data-i18n="showcase.spec.scopeValue">Built-in Dressing</div>
+        </div>
+        <div class="row">
+          <div class="k" data-i18n="showcase.spec.width">Overall Width</div>
+          <div class="v">460 cm</div>
+        </div>
+        <div class="row">
+          <div class="k" data-i18n="showcase.spec.date">Drawing Date</div>
+          <div class="v">24/01/2024</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="showcase-glass">
+      <span class="glass-label" data-i18n="showcase.glassLabel">— Dressing Malek</span>
+      <span class="glass-mark"></span>
+      <!-- canvas sits behind; the glass is the foreground "card" -->
+      <div data-i18n="showcase.glassText" style="text-align:center; font-family: var(--display); font-style: italic; font-size: 48px; color: var(--espresso); letter-spacing: -0.01em;">
+        4.60 m,<br/>
+        <span style="color:var(--gold);">drawn to scale.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== PROCESS ============== -->
+<section class="process" id="process" data-screen-label="06 Process">
+  <div class="process-head">
+    <div>
+      <span class="eyebrow" style="margin-bottom:24px; display:inline-flex;" data-i18n="process.eyebrow">— 05 / Process</span>
+      <h2 class="section-title section-title-anim" style="margin-top:18px;">
+        <span data-i18n="process.title">How a project<br /><span class="display italic" style="color:var(--gold);">moves forward.</span></span>
+      </h2>
+    </div>
+    <p style="max-width:380px; color:var(--mocha); font-size:14px; line-height:1.7;" data-i18n="process.body">
+      The workflow follows Mariem's CV experience: active listening, design
+      studies, detailed drawings, coordinated suppliers, and site control.
+    </p>
+  </div>
+
+  <div class="process-list">
+
+    <div class="process-step">
+      <div class="ps-num">01</div>
+      <div class="ps-title" data-i18n="process.steps.1.title">Listen &amp; Measure</div>
+      <div class="ps-desc" data-i18n="process.steps.1.desc">
+        Clarify the client's needs, preferences, budget, safety constraints,
+        and site measurements before any drawing starts.
+      </div>
+      <div class="ps-arrow">↗</div>
+    </div>
+
+    <div class="process-step">
+      <div class="ps-num">02</div>
+      <div class="ps-title" data-i18n="process.steps.2.title">Sketches <span class="italic">APS / APD</span></div>
+      <div class="ps-desc" data-i18n="process.steps.2.desc">
+        Build the first layout direction with sketches, mood references,
+        proportions, materials, and clear project options.
+      </div>
+      <div class="ps-arrow">↗</div>
+    </div>
+
+    <div class="process-step">
+      <div class="ps-num">03</div>
+      <div class="ps-title" data-i18n="process.steps.3.title">Plans &amp; <span class="italic">3D</span></div>
+      <div class="ps-desc" data-i18n="process.steps.3.desc">
+        Prepare detailed technical drawings, KitchenDraw or 2020 Design views,
+        and realistic renderings for client validation.
+      </div>
+      <div class="ps-arrow">↗</div>
+    </div>
+
+    <div class="process-step">
+      <div class="ps-num">04</div>
+      <div class="ps-title" data-i18n="process.steps.4.title">Suppliers &amp; Quotes</div>
+      <div class="ps-desc" data-i18n="process.steps.4.desc">
+        Coordinate materials, suppliers, entrepreneurs, commercial offers,
+        and practical solutions for technical difficulties.
+      </div>
+      <div class="ps-arrow">↗</div>
+    </div>
+
+    <div class="process-step">
+      <div class="ps-num">05</div>
+      <div class="ps-title" data-i18n="process.steps.5.title">Chantier <span class="italic">Follow-up</span></div>
+      <div class="ps-desc" data-i18n="process.steps.5.desc">
+        Track the work on site, technical prescriptions, timelines, costs,
+        quality of materials, and delivery until reception.
+      </div>
+      <div class="ps-arrow">↗</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============== EXPERIENCE ============== -->
+<section class="testimonials" id="experience" data-screen-label="07 Experience">
+  <div class="testimonials-head">
+    <span class="eyebrow" style="margin-bottom:24px; display:inline-flex;" data-i18n="experience.eyebrow">— 06 / Experience</span>
+    <h2 class="section-title section-title-anim" style="margin-top:24px;">
+      <span data-i18n="experience.title">Professional<br/><span class="display italic" style="color:var(--gold);">background.</span></span>
+    </h2>
+  </div>
+
+  <div class="t-grid">
+    <article class="t-card">
+      <div class="t-quote-mark">01</div>
+      <p class="t-quote" data-i18n="experience.cards.1.quote">
+        Freelance interior design and space planning with <span class="italic">JK Building</span>:
+        sketches, APS/APD, detailed plans, 3D visuals, material samples,
+        supplier coordination, and site follow-up.
+      </p>
+      <div class="t-author">
+        <div class="t-avatar">22</div>
+        <div class="t-meta">
+          <span class="t-name" data-i18n="experience.cards.1.name">Designer d'intérieur</span>
+          <span class="t-role" data-i18n="experience.cards.1.role">Oct 2022 — Present</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="t-card">
+      <div class="t-quote-mark">02</div>
+      <p class="t-quote" data-i18n="experience.cards.2.quote">
+        Technico-commercial experience with <span class="italic">SBA Tunisia</span> and
+        ECO Cuisine: client needs, site measurements, offers, sales follow-up,
+        3D kitchen/dressing concepts, and technical file transfer.
+      </p>
+      <div class="t-author">
+        <div class="t-avatar">21</div>
+        <div class="t-meta">
+          <span class="t-name" data-i18n="experience.cards.2.name">Technico-commercial</span>
+          <span class="t-role" data-i18n="experience.cards.2.role">Mar 2021 — Jul 2022</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="t-card">
+      <div class="t-quote-mark">03</div>
+      <p class="t-quote" data-i18n="experience.cards.3.quote">
+        Interior decoration with <span class="italic">Atelier Mohamed Limam</span> and
+        Archigroup Design: client advice, 3D proposals, estimates, plans,
+        elevations, mood boards, and chantier follow-up.
+      </p>
+      <div class="t-author">
+        <div class="t-avatar">17</div>
+        <div class="t-meta">
+          <span class="t-name" data-i18n="experience.cards.3.name">Décoratrice d'intérieur</span>
+          <span class="t-role" data-i18n="experience.cards.3.role">Jan 2017 — Nov 2019</span>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ============== SKILLS / EDUCATION ============== -->
+<section class="press" id="skills" data-screen-label="07b Skills">
+  <div class="press-wrap">
+    <span class="eyebrow" data-i18n="skills.eyebrow">— Skills &amp; Education</span>
+    <h3 class="press-title" data-i18n="skills.title">Professional Skills</h3>
+    <p class="press-intro" data-i18n="skills.body">
+      A practical profile shaped by interior decoration, joinery workshops,
+      kitchen and dressing showrooms, technical sales, and site follow-up.
+    </p>
+    <ul class="press-list">
+      <li><span class="press-name" data-i18n="skills.items.1.name">Teamwork &amp; Precision</span><span class="press-meta" data-i18n="skills.items.1.meta">Organized, accurate, detail-focused project habits</span></li>
+      <li><span class="press-name" data-i18n="skills.items.2.name">Client Communication</span><span class="press-meta" data-i18n="skills.items.2.meta">Adapts to different contacts and project expectations</span></li>
+      <li><span class="press-name" data-i18n="skills.items.3.name">Active Listening</span><span class="press-meta" data-i18n="skills.items.3.meta">Listens, reformulates needs, and clarifies priorities</span></li>
+      <li><span class="press-name" data-i18n="skills.items.4.name">Joinery &amp; Building Knowledge</span><span class="press-meta" data-i18n="skills.items.4.meta">Technical awareness of menuiserie and construction constraints</span></li>
+      <li><span class="press-name" data-i18n="skills.items.5.name">Technical Problem Solving</span><span class="press-meta" data-i18n="skills.items.5.meta">Anticipates project difficulties and prepares buildable solutions</span></li>
+      <li><span class="press-name" data-i18n="skills.items.6.name">Commercial Skills</span><span class="press-meta" data-i18n="skills.items.6.meta">Negotiation, sales follow-up, offers, and client development</span></li>
+      <li><span class="press-name" data-i18n="skills.items.7.name">Marketing Techniques</span><span class="press-meta" data-i18n="skills.items.7.meta">Product presentation, positioning, and commercial action planning</span></li>
+      <li><span class="press-name" data-i18n="skills.items.8.name">Time Management</span><span class="press-meta" data-i18n="skills.items.8.meta">Organizes tasks, deadlines, priorities, and chantier follow-up</span></li>
+      <li><span class="press-name" data-i18n="skills.items.9.name">Initiative &amp; Reliability</span><span class="press-meta" data-i18n="skills.items.9.meta">Punctuality, attention to detail, and independent initiative</span></li>
+      <li><span class="press-name" data-i18n="skills.items.10.name">Design Software</span><span class="press-meta" data-i18n="skills.items.10.meta">AutoCAD · KitchenDraw · 2020 Design</span></li>
+      <li><span class="press-name" data-i18n="skills.items.11.name">Office Tools</span><span class="press-meta" data-i18n="skills.items.11.meta">Word · Excel · PowerPoint</span></li>
+      <li><span class="press-name" data-i18n="skills.items.12.name">French Translation</span><span class="press-meta" data-i18n="skills.items.12.meta">Can translate project notes, client briefs, and technical content into French</span></li>
+      <li><span class="press-name" data-i18n="skills.items.13.name">Languages</span><span class="press-meta" data-i18n="skills.items.13.meta">French · English · Arabic</span></li>
+      <li><span class="press-name" data-i18n="skills.items.14.name">Education</span><span class="press-meta" data-i18n="skills.items.14.meta">BTP Decoration d'Interieur · College LaSalle Tunis · Oct 2016</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============== CONTACT ============== -->
+<section class="contact" id="contact" data-screen-label="08 Contact">
+  <div class="contact-wrap">
+    <div class="contact-left">
+      <span class="section-num" data-i18n="contact.sectionNum">— 07 / Get in Touch</span>
+      <h2 class="contact-title">
+        <span data-i18n="contact.title">Start your<br/>
+        project with<br/>
+        <span class="italic">Mariem Hmaied.</span></span>
+      </h2>
+      <p class="contact-sub" data-i18n="contact.body">
+        For interior layouts, dressing and kitchen concepts, technical plans,
+        3D renderings, material choices, or site follow-up, send the project
+        details directly to Mariem.
+      </p>
+
+      <div class="contact-details">
+        <div>
+          <div class="k" data-i18n="contact.details.studio">Studio</div>
+          <div class="v" data-i18n="contact.details.studioValue">Tunis, Tunisia</div>
+        </div>
+        <div>
+          <div class="k" data-i18n="contact.details.email">Email</div>
+          <div class="v"><a href="mailto:hmaiedmeriem148@gmail.com">hmaiedmeriem148@gmail.com</a></div>
+        </div>
+        <div>
+          <div class="k" data-i18n="contact.details.phone">Phone</div>
+          <div class="v"><a href="tel:+21654663748">+216 54 663 748</a></div>
+        </div>
+        <div>
+          <div class="k" data-i18n="contact.details.languages">Languages</div>
+          <div class="v" data-i18n="contact.details.languagesValue">French · English · Arabic</div>
+        </div>
+      </div>
+
+      <div class="contact-socials">
+        <a href="mailto:hmaiedmeriem148@gmail.com" data-i18n="contact.socials.email">Email</a>
+        <a href="assets/cv-2025.pdf" target="_blank" rel="noopener" data-i18n="contact.socials.cv">CV PDF</a>
+        <a href="assets/plan-dressing-malek.pdf" target="_blank" rel="noopener" data-i18n="contact.socials.project">Project PDF</a>
+        <a href="tel:+21654663748" data-i18n="contact.socials.call">Call</a>
+      </div>
+    </div>
+
+    <form class="form" id="contact-form" action="https://formsubmit.co/hmaiedmeriem148@gmail.com" method="POST" autocomplete="off">
+      <input type="hidden" name="_subject" value="Portfolio project inquiry" data-i18n-value="contact.form.subject" />
+      <input type="hidden" name="_template" value="table" />
+      <input type="hidden" name="_captcha" value="false" />
+      <input type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" class="form-honey" />
+      <div class="form-row">
+        <div class="form-field">
+          <label for="f-name" data-i18n="contact.form.nameLabel">Your Name</label>
+          <input id="f-name" name="name" type="text" placeholder="Your full name" data-i18n-placeholder="contact.form.namePlaceholder" required />
+        </div>
+        <div class="form-field">
+          <label for="f-phone" data-i18n="contact.form.phoneLabel">Phone</label>
+          <input id="f-phone" name="phone" type="tel" placeholder="+216 ..." data-i18n-placeholder="contact.form.phonePlaceholder" />
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label for="f-email" data-i18n="contact.form.emailLabel">Email</label>
+        <input id="f-email" name="email" type="email" placeholder="client@example.com" data-i18n-placeholder="contact.form.emailPlaceholder" required />
+      </div>
+
+      <div class="form-field">
+        <label for="f-project" data-i18n="contact.form.projectLabel">Project Type</label>
+        <input id="f-project" name="project" type="text" placeholder="Dressing · Kitchen · Apartment · Technical plans" data-i18n-placeholder="contact.form.projectPlaceholder" />
+      </div>
+
+      <div class="form-field">
+        <label for="f-msg" data-i18n="contact.form.messageLabel">Tell us about the space</label>
+        <textarea id="f-msg" name="message" placeholder="Measurements, rooms, materials, timeline, and what you need designed…" data-i18n-placeholder="contact.form.messagePlaceholder"></textarea>
+      </div>
+
+      <button type="submit" class="btn magnetic" data-cursor="hover">
+        <span class="btn-label" data-i18n="contact.form.submit">Contact Mariem Hmaied</span>
+        <span class="arrow"></span>
+      </button>
+    </form>
+  </div>
+</section>
+
+<!-- ============== FOOTER ============== -->
+<footer class="footer" data-screen-label="09 Footer">
+  <div class="footer-wrap">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand">Mariem Hmaied</div>
+        <p data-i18n="footer.body">
+          Interior designer and decorator in Tunis, focused on space planning,
+          dressing, kitchens, technical drawings, 3D concepts, and site follow-up.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="footer.columns.studio">Studio</h4>
+        <ul>
+          <li><a href="#about" data-i18n="footer.links.about">About</a></li>
+          <li><a href="#process" data-i18n="footer.links.process">Process</a></li>
+          <li><a href="#portfolio" data-i18n="footer.links.portfolio">Portfolio</a></li>
+          <li><a href="#experience" data-i18n="footer.links.experience">Experience</a></li>
+          <li><a href="#skills" data-i18n="footer.links.skills">Skills</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="footer.columns.services">Services</h4>
+        <ul>
+          <li><a href="#services" data-i18n="footer.links.service1">Interior Design</a></li>
+          <li><a href="#services" data-i18n="footer.links.service2">Dressing &amp; Kitchen</a></li>
+          <li><a href="#services" data-i18n="footer.links.service3">Technical Plans</a></li>
+          <li><a href="#services" data-i18n="footer.links.service4">3D Renderings</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="footer.columns.connect">Connect</h4>
+        <ul>
+          <li><a href="mailto:hmaiedmeriem148@gmail.com" data-i18n="footer.links.email">Email</a></li>
+          <li><a href="tel:+21654663748" data-i18n="footer.links.phone">Phone</a></li>
+          <li><a href="assets/cv-2025.pdf" target="_blank" rel="noopener" data-i18n="footer.links.cv">CV PDF</a></li>
+          <li><a href="assets/plan-dressing-malek.pdf" target="_blank" rel="noopener" data-i18n="footer.links.project">Project PDF</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bot">
+      <span data-i18n="footer.bottom.left">© 2026 Mariem Hmaied · All Rights Reserved</span>
+      <span data-i18n="footer.bottom.right">Designed in Tunis · Built from real CV and project files</span>
+    </div>
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script src="three-scene.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>
