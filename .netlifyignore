@@ -1,0 +1,10 @@
+.git/
+.claude/
+tools/
+*.log
+server.err.log
+server.log
+cloudflared.err.log
+cloudflared.log
+localtunnel.err.log
+localtunnel.log
